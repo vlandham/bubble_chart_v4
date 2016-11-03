@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Bubble Chart v4 - vallandingham.me</title>
+  <meta name="description" content="Using D3v4 to create a Bubble chart. Based on NYT visualization">
+  <meta name="author" content="Jim Vallandingham">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/bubble_chart.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Gates Foundation Educational Spending</h1>
+    <div id="toolbar">
+      <a href="#" id="all" class="button active">All Grants</a>
+      <a href="#" id="year" class="button">Grants By Year</a>
+    </div>
+    <div id="vis"></div>
+
+    <div class="footer">
+      <p>A demonstration of animated bubble charts in JavaScript and D3.js</p>
+      <p><a href="http://vallandingham.me/bubble_charts_in_js.html">Blog Post</a> | <a href="https://github.com/vlandham/bubble_chart">Code</a></p>
+    </div>
+  </div>
+
+  <script src="//d3js.org/d3.v4.min.js"></script>
+  <script src="src/tooltip.js"></script>
+  <script src="src/bubble_chart.js"></script>
+
+  <!-- PLEASE REMOVE AFTER CLONING -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-17355070-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  <!-- END REMOVE -->
+
+
+</body>
+</html>
