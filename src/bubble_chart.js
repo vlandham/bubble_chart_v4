@@ -19,9 +19,9 @@ function bubbleChart() {
   var center = { x: width / 2, y: height / 2 };
 
   var yearCenters = {
-    2008: { x: width / 3, y: height / 2 },
-    2009: { x: width / 2, y: height / 2 },
-    2010: { x: 2 * width / 3, y: height / 2 }
+    2008: { x: 160,         y: height / 2 },
+    2009: { x: width / 2,   y: height / 2 },
+    2010: { x: width - 160, y: height / 2 }
   };
 
   // X locations of the year titles.
@@ -57,6 +57,10 @@ function bubbleChart() {
     return -Math.pow(d.radius, 2.0) * forceStrength;
   }
 
+  var bubbleCollideForce = d3.forceCollide()
+    .radius(function(d) { return d.radius + 0.5; })
+    .iterations(3)
+  
   // Here we create a force layout and
   // @v4 We create a force simulation now and
   //  add forces to it.
@@ -64,7 +68,8 @@ function bubbleChart() {
     .velocityDecay(0.2)
     .force('x', d3.forceX().strength(forceStrength).x(center.x))
     .force('y', d3.forceY().strength(forceStrength).y(center.y))
-    .force('charge', d3.forceManyBody().strength(charge))
+    //.force('charge', d3.forceManyBody().strength(charge))
+    .force("collide", bubbleCollideForce)
     .on('tick', ticked);
 
   // @v4 Force starts up automatically,
@@ -99,7 +104,7 @@ function bubbleChart() {
     // @v4: new flattened scale names.
     var radiusScale = d3.scalePow()
       .exponent(0.5)
-      .range([2, 85])
+      .range([2, 65])
       .domain([0, maxAmount]);
 
     // Use map() to convert raw data into node data.
