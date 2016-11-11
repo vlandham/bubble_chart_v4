@@ -201,7 +201,7 @@ function bubbleChart() {
    * Provides a x value for each node to be used with the split by year
    * x force.
    */
-  function yearX(d) {
+  function nodeYearPos(d) {
     return yearCenters[d.year].x;
   }
 
@@ -233,7 +233,7 @@ function bubbleChart() {
     showYearTitles();
 
     // @v4 Reset the 'x' force to draw the bubbles to their year centers
-    simulation.force('x', d3.forceX().strength(forceStrength).x(yearX));
+    simulation.force('x', d3.forceX().strength(forceStrength).x(nodeYearPos));
 
     // @v4 We can reset the alpha value and restart the simulation
     simulation.alpha(1).restart();
