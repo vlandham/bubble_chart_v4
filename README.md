@@ -33,6 +33,8 @@ docker run -it --rm -v "$(PWD)":/app -w /app -p 3000:3000 python:3.10 python -m 
 
 The command will mount the repository into the `/app` directory, set the working directory to `/app`, map host port 3000 to the container port 3000, use python 3.10, and run the python http server on port 3000.
 
+Try visiting <http://localhost:3000> in a browser.
+
 ## Caveats
 
 **Bubbles might not be the answer to your problems**
