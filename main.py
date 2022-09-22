@@ -1,4 +1,4 @@
-from flask import Flask, render_template, json
+from flask import Flask, render_template, send_from_directory
 
 
 app = Flask(__name__)
@@ -9,9 +9,9 @@ orders = [
 ]
 
 
-@app.route('/orders', methods=['GET'])
+@app.route('/orders/', methods=['GET'])
 def get_orders():
-    return json.dumps(orders)
+    return send_from_directory('static', 'gates_money.csv')
 
 
 @app.route("/")

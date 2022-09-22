@@ -378,7 +378,7 @@ function addCommas(nStr) {
 }
 
 // Load the data.
-d3.csv('static/gates_money.csv', display);
+d3.csv('http://127.0.0.1:3000/orders/', display);
 
 // setup the buttons.
 setupButtons();
