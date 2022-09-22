@@ -8,26 +8,26 @@
  */
 function bubbleChart() {
   // Constants for sizing
-  var width = 940;
-  var height = 600;
+
+  var width = window.innerWidth || 940;
+  var height = window.innerHeight || 600;
 
   // tooltip for mouseover functionality
-  var tooltip = floatingTooltip('gates_tooltip', 240);
+  // var tooltip = floatingTooltip('gates_tooltip', 240);
 
   // Locations to move bubbles towards, depending
   // on which view mode is selected.
   var center = { x: width / 2, y: height / 2 };
 
   var yearCenters = {
-    2008: { x: width / 3, y: height / 2 },
-    2009: { x: width / 2, y: height / 2 },
-    2010: { x: 2 * width / 3, y: height / 2 }
+    incomplete: { x: width / 3, y: height / 2 },
+    complete: { x: 2 * width / 3, y: height / 2 }
   };
 
   // X locations of the year titles.
   var yearsTitleX = {
     2008: 160,
-    2009: width / 2,
+    2009: width / 2
     2010: width - 160
   };
 
@@ -78,6 +78,7 @@ function bubbleChart() {
     .range(['#d84b2a', '#beccae', '#7aa25c']);
 
 
+  // TODO: do we need an updateNodes?
   /*
    * This data manipulation function takes the raw data from
    * the CSV file and converts it into an array of node objects.
@@ -93,6 +94,8 @@ function bubbleChart() {
   function createNodes(rawData) {
     // Use the max total_amount in the data as the max in the scale's domain
     // note we have to ensure the total_amount is a number.
+
+    // TODO: refactor this to get the max order price/amount
     var maxAmount = d3.max(rawData, function (d) { return +d.total_amount; });
 
     // Sizes bubbles based on area.
@@ -105,6 +108,8 @@ function bubbleChart() {
     // Use map() to convert raw data into node data.
     // Checkout http://learnjsdata.com/ for more on
     // working with data.
+
+    // TODO: convert to order data
     var myNodes = rawData.map(function (d) {
       return {
         id: d.id,
@@ -125,6 +130,7 @@ function bubbleChart() {
     return myNodes;
   }
 
+  // TODO: this should be a class that exposes an update function that takes new rawData
   /*
    * Main entry point to the bubble chart. This function is returned
    * by the parent closure. It prepares the rawData for visualization
@@ -164,8 +170,8 @@ function bubbleChart() {
       .attr('fill', function (d) { return fillColor(d.group); })
       .attr('stroke', function (d) { return d3.rgb(fillColor(d.group)).darker(); })
       .attr('stroke-width', 2)
-      .on('mouseover', showDetail)
-      .on('mouseout', hideDetail);
+      // .on('mouseover', showDetail)
+      // .on('mouseout', hideDetail);
 
     // @v4 Merge the original empty selection and the enter selection
     bubbles = bubbles.merge(bubblesE);
