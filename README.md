@@ -25,32 +25,13 @@ D3 needs to be run from a web server due to how it imports data files.
 
 See more here: https://github.com/mbostock/d3/wiki#using
 
-So, to run this visualization locally, from the Terminal, navigate to the directory you checked it out to
+To run this visualization locally, navigate to the directory you checked out to, and run the following:
 
 ```
-cd ~/code/path/to/bubble_chart_v4
+docker run -it --rm -v "$(PWD)":/app -w /app -p 3000:3000 python:3.10 python -m http.server 3000
 ```
 
-Then start a webserver locally. If you are on a Linux or Mac, you should be able to use python's built in webserver:
-
-```
-python -m SimpleHTTPServer 3000
-```
-
-Alternatively, I have switched to using node's [http-server](https://www.npmjs.com/package/http-server)
-for local hosting.
-
-Ensure you have the node package installed:
-
-```
-npm install -g http-server
-```
-
-And then run it in the root directory of the repository.
-
-```
-http-server
-```
+The command will mount the repository into the `/app` directory, set the working directory to `/app`, map host port 3000 to the container port 3000, use python 3.10, and run the python http server on port 3000.
 
 ## Caveats
 
