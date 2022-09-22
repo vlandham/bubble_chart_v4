@@ -207,11 +207,13 @@ function bubbleChart() {
    * Provides a x value for each node to be used with the split by year
    * x force.
    */
+  // TODO: use order.completed/incomplete here, also rename
   function nodeYearPos(d) {
     return yearCenters[d.year].x;
   }
 
 
+  // TODO: we can nuke this function
   /*
    * Sets visualization in "single group mode".
    * The year labels are hidden and the force layout
@@ -229,6 +231,7 @@ function bubbleChart() {
   }
 
 
+  // TODO: does this need to be part of the update function? Andrew thinks so
   /*
    * Sets visualization in "split by year mode".
    * The year labels are shown and the force layout
@@ -245,6 +248,7 @@ function bubbleChart() {
     simulation.alpha(1).restart();
   }
 
+  // TODO: remove this
   /*
    * Hides Year title displays.
    */
@@ -252,6 +256,7 @@ function bubbleChart() {
     svg.selectAll('.year').remove();
   }
 
+  // TODO: refactor this to just be statically positioned -- we don't need the titles to move
   /*
    * Shows Year title displays.
    */
@@ -271,6 +276,7 @@ function bubbleChart() {
   }
 
 
+  // TODO: remove this
   /*
    * Function called on mouseover to display the
    * details of a bubble in the tooltip.
@@ -292,6 +298,7 @@ function bubbleChart() {
     tooltip.showTooltip(content, d3.event);
   }
 
+  // TODO: remove this
   /*
    * Hides tooltip
    */
@@ -339,9 +346,11 @@ function display(error, data) {
     console.log(error);
   }
 
+  // TODO: set up an interval here to load each data set
   myBubbleChart('#vis', data);
 }
 
+// TODO: we won't have view modes so we can kill this
 /*
  * Sets up the layout buttons to allow for toggling between view modes.
  */
@@ -366,6 +375,7 @@ function setupButtons() {
     });
 }
 
+// TODO: remove this
 /*
  * Helper function to convert a number into a string
  * and add commas to it to improve presentation.
@@ -383,8 +393,9 @@ function addCommas(nStr) {
   return x1 + x2;
 }
 
+// TODO: figure out how to refactor this with the interval
 // Load the data.
 d3.csv('data/gates_money.csv', display);
 
 // setup the buttons.
-setupButtons();
+// setupButtons();
