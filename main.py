@@ -63,7 +63,7 @@ def _update_states():
 def get_orders(page: int):
     orders.append(_create_order())
     _update_states()
-    return json.dumps(orders[:page])
+    return json.dumps(orders[:page+1])
 
 
 @app.route("/")
