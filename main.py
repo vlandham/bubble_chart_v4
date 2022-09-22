@@ -44,8 +44,10 @@ money = [
     },
 ]
 
-@app.route('/orders/', methods=['GET'])
-def get_orders():
+
+@app.route('/orders/', defaults={'page': 0})
+@app.route('/orders/<int:page>', methods=['GET'])
+def get_orders(page: int):
     return json.dumps(money)
 
 
