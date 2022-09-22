@@ -9,26 +9,21 @@
 function bubbleChart() {
   // Constants for sizing
 
-  var width = window.innerWidth || 940;
-  var height = window.innerHeight || 600;
+  var width = 940;
+  var height = 600;
 
   // tooltip for mouseover functionality
   // var tooltip = floatingTooltip('gates_tooltip', 240);
 
-  // Locations to move bubbles towards, depending
-  // on which view mode is selected.
-  var center = { x: width / 2, y: height / 2 };
-
-  var yearCenters = {
+  var orderStatusCenters = {
     incomplete: { x: width / 3, y: height / 2 },
     complete: { x: 2 * width / 3, y: height / 2 }
   };
 
   // X locations of the year titles.
-  var yearsTitleX = {
-    2008: 160,
-    2009: width / 2
-    2010: width - 160
+  var orderStatusTitlesX = {
+    incomplete: width / 3,
+    complete: width / 3 * 2
   };
 
   // @v4 strength to apply to the position forces
@@ -62,8 +57,8 @@ function bubbleChart() {
   //  add forces to it.
   var simulation = d3.forceSimulation()
     .velocityDecay(0.2)
-    .force('x', d3.forceX().strength(forceStrength).x(center.x))
-    .force('y', d3.forceY().strength(forceStrength).y(center.y))
+    .force('x', d3.forceX().strength(forceStrength).x(orderStatusCenters.incomplete))
+    .force('y', d3.forceY().strength(forceStrength).y(height / 2))
     .force('charge', d3.forceManyBody().strength(charge))
     .on('tick', ticked);
 
@@ -78,7 +73,6 @@ function bubbleChart() {
     .range(['#d84b2a', '#beccae', '#7aa25c']);
 
 
-  // TODO: do we need an updateNodes?
   /*
    * This data manipulation function takes the raw data from
    * the CSV file and converts it into an array of node objects.
@@ -96,7 +90,7 @@ function bubbleChart() {
     // note we have to ensure the total_amount is a number.
 
     // TODO: refactor this to get the max order price/amount
-    var maxAmount = d3.max(rawData, function (d) { return +d.total_amount; });
+    var maxAmount = d3.max(rawData, function (d) { return d.amount; });
 
     // Sizes bubbles based on area.
     // @v4: new flattened scale names.
@@ -113,13 +107,14 @@ function bubbleChart() {
     var myNodes = rawData.map(function (d) {
       return {
         id: d.id,
-        radius: radiusScale(+d.total_amount),
-        value: +d.total_amount,
-        name: d.grant_title,
+        radius: radiusScale(+d.amount),
+        value: +d.amount,
+        name: '',
+        state: d.state,
         org: d.organization,
         group: d.group,
         year: d.start_year,
-        x: Math.random() * 900,
+        x: orderStatusCenters[d.state],
         y: Math.random() * 800
       };
     });
@@ -186,9 +181,26 @@ function bubbleChart() {
     // @v4 Once we set the nodes, the simulation will start running automatically!
     simulation.nodes(nodes);
 
-    // Set initial layout to single group.
-    groupBubbles();
+    renderBubbles();
   };
+
+   chart.update = function(rawData) {
+     // TODO: add new nodes
+
+    // update nodes
+     const old = new Map(bubbles.data().map(d => [d.id, d]));
+     nodes = createNodes(rawData);
+     nodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
+     bubbles.data(nodes, function(d) {return d.id})
+     console.log(nodes)
+
+     simulation.alpha(1).restart();
+     simulation.nodes(nodes)
+     simulation.force('x').initialize(nodes);
+
+     // @v4 We can reset the alpha value and restart the simulation
+
+  }
 
   /*
    * Callback function that is called after every tick of the
@@ -209,37 +221,15 @@ function bubbleChart() {
    */
   // TODO: use order.completed/incomplete here, also rename
   function nodeYearPos(d) {
-    return yearCenters[d.year].x;
-  }
-
-
-  // TODO: we can nuke this function
-  /*
-   * Sets visualization in "single group mode".
-   * The year labels are hidden and the force layout
-   * tick function is set to move all nodes to the
-   * center of the visualization.
-   */
-  function groupBubbles() {
-    hideYearTitles();
-
-    // @v4 Reset the 'x' force to draw the bubbles to the center.
-    simulation.force('x', d3.forceX().strength(forceStrength).x(center.x));
-
-    // @v4 We can reset the alpha value and restart the simulation
-    simulation.alpha(1).restart();
+    const xxx = orderStatusCenters[d.state].x;
+    console.log(xxx)
+    return xxx;
   }
 
 
   // TODO: does this need to be part of the update function? Andrew thinks so
-  /*
-   * Sets visualization in "split by year mode".
-   * The year labels are shown and the force layout
-   * tick function is set to move nodes to the
-   * yearCenter of their data's year.
-   */
-  function splitBubbles() {
-    showYearTitles();
+  function renderBubbles() {
+    showOrderStatusTitles();
 
     // @v4 Reset the 'x' force to draw the bubbles to their year centers
     simulation.force('x', d3.forceX().strength(forceStrength).x(nodeYearPos));
@@ -248,82 +238,25 @@ function bubbleChart() {
     simulation.alpha(1).restart();
   }
 
-  // TODO: remove this
-  /*
-   * Hides Year title displays.
-   */
-  function hideYearTitles() {
-    svg.selectAll('.year').remove();
-  }
-
-  // TODO: refactor this to just be statically positioned -- we don't need the titles to move
   /*
    * Shows Year title displays.
    */
-  function showYearTitles() {
+  function showOrderStatusTitles() {
     // Another way to do this would be to create
     // the year texts once and then just hide them.
-    var yearsData = d3.keys(yearsTitleX);
-    var years = svg.selectAll('.year')
-      .data(yearsData);
+    var orderStatusData = d3.keys(orderStatusTitlesX);
+    var orderStatuses = svg.selectAll('.year')
+      .data(orderStatusData);
 
-    years.enter().append('text')
+    orderStatuses.enter().append('text')
       .attr('class', 'year')
-      .attr('x', function (d) { return yearsTitleX[d]; })
+      .attr('x', function (d) { return orderStatusTitlesX[d]; })
       .attr('y', 40)
       .attr('text-anchor', 'middle')
       .text(function (d) { return d; });
   }
 
 
-  // TODO: remove this
-  /*
-   * Function called on mouseover to display the
-   * details of a bubble in the tooltip.
-   */
-  function showDetail(d) {
-    // change outline to indicate hover state.
-    d3.select(this).attr('stroke', 'black');
-
-    var content = '<span class="name">Title: </span><span class="value">' +
-                  d.name +
-                  '</span><br/>' +
-                  '<span class="name">Amount: </span><span class="value">$' +
-                  addCommas(d.value) +
-                  '</span><br/>' +
-                  '<span class="name">Year: </span><span class="value">' +
-                  d.year +
-                  '</span>';
-
-    tooltip.showTooltip(content, d3.event);
-  }
-
-  // TODO: remove this
-  /*
-   * Hides tooltip
-   */
-  function hideDetail(d) {
-    // reset outline
-    d3.select(this)
-      .attr('stroke', d3.rgb(fillColor(d.group)).darker());
-
-    tooltip.hideTooltip();
-  }
-
-  /*
-   * Externally accessible function (this is attached to the
-   * returned chart function). Allows the visualization to toggle
-   * between "single group" and "split by year" modes.
-   *
-   * displayName is expected to be a string and either 'year' or 'all'.
-   */
-  chart.toggleDisplay = function (displayName) {
-    if (displayName === 'year') {
-      splitBubbles();
-    } else {
-      groupBubbles();
-    }
-  };
 
 
   // return the chart function from closure.
@@ -341,61 +274,58 @@ var myBubbleChart = bubbleChart();
  * Function called once data is loaded from CSV.
  * Calls bubble chart function to display inside #vis div.
  */
-function display(error, data) {
+function renderFirst(error, data) {
+  if (error) {
+    console.log(error);
+  }
+  myBubbleChart('#vis', data);
+}
+
+function update(error, data) {
   if (error) {
     console.log(error);
   }
 
-  // TODO: set up an interval here to load each data set
-  myBubbleChart('#vis', data);
+  myBubbleChart.update(data)
 }
 
-// TODO: we won't have view modes so we can kill this
-/*
- * Sets up the layout buttons to allow for toggling between view modes.
- */
-function setupButtons() {
-  d3.select('#toolbar')
-    .selectAll('.button')
-    .on('click', function () {
-      // Remove active class from all buttons
-      d3.selectAll('.button').classed('active', false);
-      // Find the button just clicked
-      var button = d3.select(this);
+function getData(page = 0) {
+  const url = 'url/' + dataCounter;
+  fetch(url)
+      .then(res => res.json())
+      .then(({ path }) => {
 
-      // Set it as the active button
-      button.classed('active', true);
+        // load data
+        if (!page) { d3.json(path, renderFirst); }
+        else { d3.json(path, update) }
 
-      // Get the id of the button
-      var buttonId = button.attr('id');
-
-      // Toggle the bubble chart based on
-      // the currently clicked button.
-      myBubbleChart.toggleDisplay(buttonId);
-    });
+        setTimeout(() => {
+          getData(page + 1);
+        }, 10 * 1000) // 10 sec
+      })
+      .catch(console.error);
 }
 
-// TODO: remove this
-/*
- * Helper function to convert a number into a string
- * and add commas to it to improve presentation.
- */
-function addCommas(nStr) {
-  nStr += '';
-  var x = nStr.split('.');
-  var x1 = x[0];
-  var x2 = x.length > 1 ? '.' + x[1] : '';
-  var rgx = /(\d+)(\d{3})/;
-  while (rgx.test(x1)) {
-    x1 = x1.replace(rgx, '$1' + ',' + '$2');
-  }
+// getData();
 
-  return x1 + x2;
-}
+const dataOne = [
 
-// TODO: figure out how to refactor this with the interval
+  {"id": 1, "amount": 10.00, 'state': 'incomplete', 'date': '09-22-2022', 'bentobox_revenue': 1.00, 'restaurant_revenue': 9.00},
+  {"id": 2, "amount": 25.90, 'state': 'incomplete', 'date': '09-22-2022', 'bentobox_revenue': 2.59, 'restaurant_revenue': 23.41}
+]
+
+const dataTwo = [
+  {"id": 1, "amount": 10.00, 'state': 'incomplete', 'date': '09-22-2022', 'bentobox_revenue': 1.00, 'restaurant_revenue': 9.00},
+  {"id": 2, "amount": 25.90, 'state': 'complete', 'date': '09-22-2022', 'bentobox_revenue': 2.59, 'restaurant_revenue': 23.41}
+]
+
+renderFirst(null, dataOne);
+setTimeout(() => {
+  update(null, dataTwo);
+}, 2000);
+
 // Load the data.
-d3.csv('data/gates_money.csv', display);
+// d3.csv('data/gates_money.csv', renderFirst);
 
 // setup the buttons.
 // setupButtons();
