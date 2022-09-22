@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker build --tag d3 .
+docker run -it --rm -v "$(PWD)":/app -w /app -p 3000:3000 d3:latest
