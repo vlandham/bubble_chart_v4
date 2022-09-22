@@ -28,7 +28,7 @@ See more here: https://github.com/mbostock/d3/wiki#using
 To run this visualization locally, navigate to the directory you checked out to, and run the following:
 
 ```
-docker run -it --rm -v "$(PWD)":/app -w /app -p 3000:3000 python:3.10 python -m http.server 3000
+docker run -it --rm -v "$(PWD)":/app -w /app -p 3000:3000 python:3.10 ./run_server
 ```
 
 The command will mount the repository into the `/app` directory, set the working directory to `/app`, map host port 3000 to the container port 3000, use python 3.10, and run the python http server on port 3000.
