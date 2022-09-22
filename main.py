@@ -1,7 +1,6 @@
 import time
 import uuid
 import random
-from decimal import Decimal
 
 from flask import Flask, render_template, json
 
@@ -10,6 +9,7 @@ app = Flask(__name__)
 
 POSSIBLE_STATES = ('paid', 'unpaid')
 
+orders = []
 
 def _get_random_id():
     return uuid.uuid4()
@@ -40,7 +40,6 @@ def random_date(start, end, prop):
     return str_time_prop(start, end, '%m/%d/%Y', prop)
 
 
-
 def _create_order():
     resto_rev = _get_random_price()
     amount = _get_random_price()
@@ -54,10 +53,17 @@ def _create_order():
     }
 
 
+def _update_states():
+    for order in orders:
+        order['state'] = random.choice(POSSIBLE_STATES)
+
+
 @app.route('/orders/', defaults={'page': 0})
 @app.route('/orders/<int:page>', methods=['GET'])
 def get_orders(page: int):
-    return json.dumps([_create_order()])
+    orders.append(_create_order())
+    _update_states()
+    return json.dumps(orders[:page])
 
 
 @app.route("/")
