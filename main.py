@@ -3,9 +3,12 @@ import uuid
 import random
 
 from flask import Flask, render_template, json
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 POSSIBLE_STATES = ('paid', 'unpaid')
 
@@ -58,8 +61,8 @@ def _update_states():
         order['state'] = random.choice(POSSIBLE_STATES)
 
 
-@app.route('/orders/', defaults={'page': 0})
-@app.route('/orders/<int:page>', methods=['GET'])
+@app.route('/api/orders/', defaults={'page': 0})
+@app.route('/api/orders/<int:page>', methods=['GET'])
 def get_orders(page: int):
     orders.append(_create_order())
     _update_states()

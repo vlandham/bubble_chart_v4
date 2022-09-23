@@ -117,7 +117,7 @@ function sickChart(data) {
 
 let update;
 function getData(page = 0) {
-    const url = 'http://localhost:3000/orders/' + page;
+    const url = 'http://localhost:3000/api/orders/' + page;
     fetch(url)
         .then(res => res.json())
         .then((data) => {
@@ -126,7 +126,7 @@ function getData(page = 0) {
             if (!update) {
                 update = sickChart(data)
             } else {
-                update(data)
+                update(null, data)
             }
 
             setTimeout(() => {
@@ -135,19 +135,19 @@ function getData(page = 0) {
         })
         .catch(console.error);
 }
-// getData();
+getData();
 
  // demo code
-let updater = sickChart(allData[0]);
-setTimeout(() => {
-    updater(null, allData[1]);
-    updater(null, allData[1]);
-}, 1000)
-setTimeout(() => {
-    updater(null, allData[2]);
-    updater(null, allData[2]);
-}, 2000)
-setTimeout(() => {
-    updater(null, allData[3]);
-    updater(null, allData[3]);
-}, 3000)
+// let updater = sickChart(allData[0]);
+// setTimeout(() => {
+//     updater(null, allData[1]);
+//     updater(null, allData[1]);
+// }, 1000)
+// setTimeout(() => {
+//     updater(null, allData[2]);
+//     updater(null, allData[2]);
+// }, 2000)
+// setTimeout(() => {
+//     updater(null, allData[3]);
+//     updater(null, allData[3]);
+// }, 3000)
