@@ -1,7 +1,8 @@
-const data1 = [
-
-    {"id": 1, "amount": 10.00, 'state': 'unpaid', 'date': '09-22-2022', 'bentobox_revenue': 1.00, 'restaurant_revenue': 9.00},
-    {"id": 2, "amount": 25.90, 'state': 'unpaid', 'date': '09-22-2022', 'bentobox_revenue': 2.59, 'restaurant_revenue': 23.41}
+const allData = [
+   [{"amount": 56.43, "bentobox_revenue": "9.50", "date": "01/21/2022", "id": "3d3ff12f-3227-4c3e-9bb4-d10b965794b5", "restaurant_revenue": 65.93, "state": "unpaid"}],
+    [{"amount": 56.43, "bentobox_revenue": "9.50", "date": "01/21/2022", "id": "3d3ff12f-3227-4c3e-9bb4-d10b965794b5", "restaurant_revenue": 65.93, "state": "paid"}, {"amount": 50.7, "bentobox_revenue": "2.74", "date": "07/04/2022", "id": "90d300da-dddc-4d18-8c65-64a7c981198b", "restaurant_revenue": 53.44, "state": "unpaid"}],
+    [{"amount": 56.43, "bentobox_revenue": "9.50", "date": "01/21/2022", "id": "3d3ff12f-3227-4c3e-9bb4-d10b965794b5", "restaurant_revenue": 65.93, "state": "paid"}, {"amount": 50.7, "bentobox_revenue": "2.74", "date": "07/04/2022", "id": "90d300da-dddc-4d18-8c65-64a7c981198b", "restaurant_revenue": 53.44, "state": "paid"}, {"amount": 51.63, "bentobox_revenue": "14.99", "date": "10/13/2022", "id": "32449c9c-b161-4b66-83b2-e6cff8ae6498", "restaurant_revenue": 66.62, "state": "unpaid"}, {"amount": 35.31, "bentobox_revenue": "9.80", "date": "05/20/2022", "id": "f6b502f1-0169-4ade-b568-9c26f99fd05c", "restaurant_revenue": 45.11, "state": "unpaid"}],
+    [{"amount": 56.43, "bentobox_revenue": "9.50", "date": "01/21/2022", "id": "3d3ff12f-3227-4c3e-9bb4-d10b965794b5", "restaurant_revenue": 65.93, "state": "paid"}, {"amount": 50.7, "bentobox_revenue": "2.74", "date": "07/04/2022", "id": "90d300da-dddc-4d18-8c65-64a7c981198b", "restaurant_revenue": 53.44, "state": "paid"}, {"amount": 51.63, "bentobox_revenue": "14.99", "date": "10/13/2022", "id": "32449c9c-b161-4b66-83b2-e6cff8ae6498", "restaurant_revenue": 66.62, "state": "paid"}, {"amount": 35.31, "bentobox_revenue": "9.80", "date": "05/20/2022", "id": "f6b502f1-0169-4ade-b568-9c26f99fd05c", "restaurant_revenue": 45.11, "state": "paid"}, {"amount": 51.14, "bentobox_revenue": "8.63", "date": "09/25/2022", "id": "7f95c752-fa15-423a-bcc1-54a5ac5973c1", "restaurant_revenue": 59.77, "state": "unpaid"}]
 ]
 
 const data2 = [
@@ -85,11 +86,16 @@ function sickChart(data) {
                 .range([2, 85])
                 .domain([0, maxAmount]);
 
-            // bubbles = svg.selectAll("circle")
-            //     .data(data, d => d.label)
-            //     .join(enter => enter.append('circle'))
-            // .enter()
-            // .append('circle')
+            bubbles = svg.selectAll("circle")
+                .data(data, d => d.id)
+
+            bubbles.exit().remove();
+
+            bubbles.enter()
+                .append('circle')
+                .merge(bubbles)
+
+
 
 
             simulation.nodes(data);
@@ -111,27 +117,37 @@ function sickChart(data) {
 
 let update;
 function getData(page = 0) {
-    const url = 'http:localhost:3000/' + page;
+    const url = 'http://localhost:3000/orders/' + page;
     fetch(url)
         .then(res => res.json())
-        .then(({ path }) => {
+        .then((data) => {
 
             // load data
-            if (!page) {
-                d3.json(path, (err, data) => {
-                    chart = sickChart(data)
-                });
-            } else { d3.json(path, update) }
+            if (!update) {
+                update = sickChart(data)
+            } else {
+                update(data)
+            }
 
             setTimeout(() => {
                 getData(page + 1);
-            }, 10 * 1000) // 10 sec
+            }, 3 * 1000) // 10 sec
         })
         .catch(console.error);
 }
+// getData();
 
-// demo code
-let updater = sickChart(data1);
+ // demo code
+let updater = sickChart(allData[0]);
 setTimeout(() => {
-    updater(null, data2);
+    updater(null, allData[1]);
+    updater(null, allData[1]);
 }, 1000)
+setTimeout(() => {
+    updater(null, allData[2]);
+    updater(null, allData[2]);
+}, 2000)
+setTimeout(() => {
+    updater(null, allData[3]);
+    updater(null, allData[3]);
+}, 3000)
