@@ -191,12 +191,12 @@ function bubbleChart() {
      const old = new Map(bubbles.data().map(d => [d.id, d]));
      nodes = createNodes(rawData);
      nodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
-     bubbles.data(nodes, function(d) {return d.id})
+     bubbles.data(nodes).enter()
      console.log(nodes)
 
+     simulation.nodes()
      simulation.alpha(1).restart();
-     simulation.nodes(nodes)
-     simulation.force('x').initialize(nodes);
+     // simulation.force('x').initialize(nodes);
 
      // @v4 We can reset the alpha value and restart the simulation
 

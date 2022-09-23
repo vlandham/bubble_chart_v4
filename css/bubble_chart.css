@@ -3,29 +3,13 @@ a, a:visited, a:active {
 }
 
 .container {
-  max-width: 900px;
+  max-width: 1180px;
   margin: auto;
 }
 
-.button {
-  min-width: 130px;
-  padding: 4px 5px;
-  cursor: pointer;
-  text-align: center;
-  font-size: 13px;
-  border: 1px solid #e0e0e0;
-  text-decoration: none;
-}
-
-.button.active {
-  background: #000;
-  color: #fff;
-}
-
-
 #vis {
   width: 940px;
-  height: 600px;
+  height: 800px;
   clear: both;
   margin-bottom: 10px;
 }
