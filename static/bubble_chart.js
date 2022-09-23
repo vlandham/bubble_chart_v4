@@ -325,7 +325,7 @@ setTimeout(() => {
 }, 2000);
 
 // Load the data.
-// d3.csv('data/gates_money.csv', renderFirst);
+d3.json('http://127.0.0.1:3000/orders/', display);
 
 // setup the buttons.
 // setupButtons();
