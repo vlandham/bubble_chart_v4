@@ -28,19 +28,19 @@ function sickChart(data) {
     // @v4: new flattened scale names.
     var radiusScale = d3.scalePow()
         .exponent(0.5)
-        .range([2, 85])
+        .range([2, 25])
         .domain([0, maxAmount]);
 
     var colorScale = d3.scaleLinear()
-        .domain([0, 10, 37])
+        .domain([3, 33, 63])
         .range(["#c7e9b4", "#41b6c4", "#253494"]);
 
     var simulation = d3.forceSimulation()
         .force("x", d3.forceX(function (d) {
             if (d.state === 'unpaid') {
-                return width / 4;
+                return width / 6;
             } else {
-                return width / 4 * 3;
+                return width / 6 * 5;
             }
         }).strength(0.05))
         .force("y", d3.forceY(height / 2).strength(0.05))
@@ -83,7 +83,7 @@ function sickChart(data) {
             });
             radiusScale = d3.scalePow()
                 .exponent(0.5)
-                .range([2, 85])
+                .range([2, 25])
                 .domain([0, maxAmount]);
 
             bubbles = svg.selectAll("circle")
