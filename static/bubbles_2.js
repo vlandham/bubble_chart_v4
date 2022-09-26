@@ -32,8 +32,8 @@ function sickChart(data) {
         .domain([0, maxAmount]);
 
     var colorScale = d3.scaleLinear()
-        .domain([3, 33, 63])
-        .range(["#c7e9b4", "#41b6c4", "#253494"]);
+        .domain([0, 80])
+        .range(["#FAAE9c", "#F15541"]);
 
     var simulation = d3.forceSimulation()
         .force("x", d3.forceX(function (d) {
@@ -57,10 +57,21 @@ function sickChart(data) {
         })
         .attr("fill", function (d) {
             return colorScale(d.amount);
-        });
+        })
+        .attr('stroke', function (d) { return d3.rgb(colorScale(d.amount)).darker(); })
+        .attr('stroke-width', 2);
 
     simulation.nodes(data)
         .on("tick", ticked)
+
+    var labels = svg.selectAll("text")
+          .data(data)
+          .enter()
+          .append("text")
+          .text(function(d) {
+            return `$${d.amount}`;
+          })
+          .style("text-anchor","middle");
 
 
     function ticked() {
@@ -69,6 +80,12 @@ function sickChart(data) {
         }).attr("cy", function (d) {
             return d.y;
         })
+         labels.attr("x", function(d) {
+            return d.x;
+          })
+          .attr("y", function(d) {
+            return d.y +5;
+          })
     }
 
     return function(err, newData) {
@@ -95,7 +112,19 @@ function sickChart(data) {
                 .append('circle')
                 .merge(bubbles)
 
+        labels = svg.selectAll("text")
+            .data(data)
 
+        labels.exit().remove()
+
+        labels
+            .enter()
+            .append("text")
+            .merge(labels)
+            .text(function(d) {
+                return `$${d.amount}`;
+            })
+            .style("text-anchor","middle");
 
 
             simulation.nodes(data);
@@ -110,8 +139,9 @@ function sickChart(data) {
             bubbles.attr("r", function (d) {
                 return radiusScale(d.amount)
             }).attr("fill", function (d) {
-                return colorScale(d.amount);
-            })
+                return colorScale(d.amount)
+            }).attr('stroke', function (d) { return d3.rgb(colorScale(d.amount)).darker(); })
+        .attr('stroke-width', 2)
         }
 }
 
@@ -131,7 +161,7 @@ function getData(page = 0) {
 
             setTimeout(() => {
                 getData(page + 1);
-            }, 3 * 1000) // 10 sec
+            }, 3 * 1000) // 3 sec
         })
         .catch(console.error);
 }
