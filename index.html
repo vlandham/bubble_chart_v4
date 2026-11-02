@@ -31,15 +31,15 @@
   <script src="src/bubble_chart.js"></script>
 
   <!-- PLEASE REMOVE AFTER CLONING -->
+  <!-- Cloudflare Web Analytics (same site token as vallandingham.me); production only -->
   <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-17355070-1', 'auto');
-  ga('send', 'pageview');
-
+    if (location.hostname === 'vallandingham.me' || location.hostname === 'www.vallandingham.me') {
+      var beacon = document.createElement('script');
+      beacon.defer = true;
+      beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+      beacon.dataset.cfBeacon = JSON.stringify({ token: '2b4df352ecf04cab9fc322e072c3ef88' });
+      document.body.appendChild(beacon);
+    }
   </script>
   <!-- END REMOVE -->
 
